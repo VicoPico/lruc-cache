@@ -2,8 +2,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Enables access-order so that recently accessed
- * entries move to the end of the map.
+ * LRU cache using LinkedHashMap in access-order mode.
  */
 class LRUCache {
 
@@ -13,16 +12,27 @@ class LRUCache {
   LRUCache(int capacity) {
     this.capacity = capacity;
 
-    // accessOrder=true makes get()/put() update recency
-    this.cache = new LinkedHashMap<>(capacity, 0.75f, true);
+    // accessOrder=true: get()/put() update recency
+    // removeEldestEntry: evict least recently used when capacity exceeded
+    this.cache = new LinkedHashMap<>(capacity, 0.75f, true) {
+      @Override
+      protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
+        return size() > LRUCache.this.capacity;
+      }
+    };
   }
 
-  // Accessing a key updates its recency
   int get(int key) {
     return cache.getOrDefault(key, -1);
   }
 
   void put(int key, int value) {
     cache.put(key, value);
+  }
+
+  void readCache() {
+    for (Map.Entry<Integer, Integer> entry : cache.entrySet()) {
+      System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+    }
   }
 }
