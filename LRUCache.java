@@ -2,8 +2,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Basic cache backed by LinkedHashMap.
- * No LRU behavior yet — just key/value storage.
+ * Enables access-order so that recently accessed
+ * entries move to the end of the map.
  */
 class LRUCache {
 
@@ -12,15 +12,16 @@ class LRUCache {
 
   LRUCache(int capacity) {
     this.capacity = capacity;
-    this.cache = new LinkedHashMap<>();
+
+    // accessOrder=true makes get()/put() update recency
+    this.cache = new LinkedHashMap<>(capacity, 0.75f, true);
   }
 
-  // Returns value if present, otherwise -1
+  // Accessing a key updates its recency
   int get(int key) {
     return cache.getOrDefault(key, -1);
   }
 
-  // Inserts or updates value (no eviction yet)
   void put(int key, int value) {
     cache.put(key, value);
   }
